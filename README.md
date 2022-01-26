@@ -1,13 +1,11 @@
-[![Build Status](https://travis-ci.com/zanellia/feasible_sqp.svg?branch=master)](https://travis-ci.com/zanellia/feasible_sqp)
+[![Build Status](https://travis-ci.com/zanellia/feasible_sqp.svg?branch=testing)](https://travis-ci.com/zanellia/feasible_sqp)
 # A feasible sequential quadratic programming strategy with iterated second-order corrections
-This package provides a solver for nonconvex programs of the form
+This package provides a solver for parametric nonconvex programs of the form
 
-<p>min_y f(y,p)
-</p>
-<p>s.t.  lb_g <= g(y,p) <= ub_g,
-</p>
-<p>      lb_y <= y <= ub_y,
-
+<img src="https://github.com/zanellia/feasible_sqp/blob/master/figures/nlp_description.png"
+     width="296" height="160">
+## dependencies 
+`feasible_sqp` uses the sparse implementation of the QP solver `qpOASES` which depends on MA57. Unfortunately, this complicates installation a bit. You need to obtain a valid license for HSL and its source code (see [this page](https://www.hsl.rl.ac.uk/download/MA57/3.11.0/)). After obtaining the source code for HSL, you'll need to download the METIS package (version 4.3 is required) [here](http://glaros.dtc.umn.edu/gkhome/fetch/sw/metis/OLD/metis-4.0.3.tar.gz), extract the code and place it inside the root folder of coinhsl. Proceed then with the installation instructions of HSL, i.e., run `./configure`, `make` and `make install`.
 ## installation
 - clone the repo: 
 ```bash
@@ -25,16 +23,16 @@ pip install -e .
 - build and install the dependencies:
 ```python
 import feasible_sqp
-feasible_sqp.install_dependencies(matlab_root_path=<...>)
+feasible_sqp.install_dependencies(hsl_lib_path=<...>)
 ```
 
 ## usage
 ```python
 from feasible_sqp import *
 
-matlab_root_path =     <...> # e.g., '/usr/local/MATLAB/R2017b'
+hsl_lib_path =     <...> # e.g., '/usr/local/lib/libcoinhsl.so'
 
-install_dependencies(matlab_root_path=matlab_root_path)
+install_dependencies(hsl_lib_path=hsl_lib_path)
 
 # number of primal variables
 nv = 2
@@ -56,7 +54,7 @@ lby = -np.ones((nv,1))
 uby = np.ones((nv,1))
 
 # generate solver
-solver.generate_solver(f,g, lby = lby, uby = uby)
+solver.generate_solver(f, f, g, lby = lby, uby = uby)
 
 # solve NLP
 solver.solve()
